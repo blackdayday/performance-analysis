@@ -1,72 +1,110 @@
 <template>
-  <el-card style="min-height: 100%;">
-    <div slot="header">个人成绩分析</div>
-    <el-card>
-      <span>科目:</span>
-      <el-select v-model="value" size="small">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled">
-          </el-option>
-      </el-select>
-      <span>个人期望分：</span>
-      <el-input v-model="expectScore" size="small" style="width: 100px;" :disabled='isEdit'></el-input>
-      <el-button type="primary" @click="confirm" size="small">确认</el-button>
-    </el-card>
-    <el-card>
-      <div>
-        <h4>单科成绩趋势图</h4>
-        <Chart :chartOptions="chartOptions"></Chart>
-     </div>
-    </el-card>
-    <el-card>
-      <div>
-        <h4>单科成绩解读：</h4><br/>
-        <span v-html="gradeAnalysisHtml"></span>
-     </div>
-    </el-card>
-    <el-card>
-       <div >综合成绩</div>
-       <el-card>
-         <div style="margin:10px 5px">
-             <span>筛选时间：</span>
-             <el-select v-model="time" size="small">
-                 <el-option
-                   v-for="item in timeOptions"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value"
-                   :disabled="item.disabled">
-                 </el-option>
-             </el-select>
-
-          </div>
-       </el-card>
-       
-       <!-- 对选择的时间的考试的全部科目进行解读 -->
-       <el-card>
-         <div>
-           <h4>综合解读：</h4>
-           <span v-html="allGradeAnalysisHtml"></span>
-         </div>
-       </el-card>
-       <el-card>
-         <h4>成绩表</h4>
-         <el-table :data="tableData" border size="small" max-height="500">
-           <el-table-column prop="course.name" label="课程名"></el-table-column>
-           <el-table-column prop="grade" label="实际分数"></el-table-column>
-           <el-table-column prop="convertGrade" label="折算分数"></el-table-column>
-         </el-table>
-         <el-button style="margin:5px 5px" type='success' size="small">导出</el-button>
-
-       </el-card>
-       
-    </el-card>
-    
-  </el-card>
+    <div>
+      <el-card style="min-height: 100%;">
+        <div slot="header">个人成绩分析</div>
+        <el-card>
+                 <div>
+                     <span>班级</span>
+                     <el-select v-model="claVal" size="small">
+                            <el-option
+                            v-for="item in classOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                            :disabled="item.disabled">
+                            </el-option>
+                         <!-- <el-option
+                             v-for="item in classOptions"
+                             :key="item.id"
+                             :label="item.label"
+                             :value="item.id"
+                             :disabled="item.disabled">
+                         </el-option> -->
+                     </el-select>
+                     <span>学生</span>
+                     <el-select v-model="stuVal" size="small">
+                         <el-option
+                             v-for="item in stuOptions"
+                             :key="item.value"
+                             :label="item.label"
+                             :value="item.value"
+                             :disabled="item.disabled">
+                         </el-option>
+                     </el-select>
+                     <el-button type="primary" @click="analysisStudent" size="small">分析</el-button>
+                 </div>
+            </el-card>
+        <el-card>
+            <div>单科成绩分析</div>
+            
+            <el-card>
+              <span>科目:</span>
+              <el-select v-model="value" size="small">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled">
+                  </el-option>
+              </el-select>
+              <span>个人期望分：</span>
+              <el-input v-model="expectScore" size="small" style="width: 100px;" :disabled='isEdit'></el-input>
+              <el-button type="primary" @click="confirm" size="small">确认</el-button>
+            </el-card>
+            <el-card>
+              <div>
+                <h4>单科成绩趋势图</h4>
+                <Chart :chartOptions="chartOptions"></Chart>
+             </div>
+            </el-card>
+            <el-card>
+              <div>
+                <h4>单科成绩解读：</h4><br/>
+                <span v-html="gradeAnalysisHtml"></span>
+             </div>
+            </el-card>
+        </el-card>
+        <el-card>
+           <div >综合成绩</div>
+           <el-card>
+             <div style="margin:10px 5px">
+                 <span>筛选时间：</span>
+                 <el-select v-model="time" size="small">
+                     <el-option
+                       v-for="item in timeOptions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"
+                       :disabled="item.disabled">
+                     </el-option>
+                 </el-select>
+     
+              </div>
+           </el-card>
+           
+           <!-- 对选择的时间的考试的全部科目进行解读 -->
+           <el-card>
+             <div>
+               <h4>综合解读：</h4>
+               <span v-html="allGradeAnalysisHtml"></span>
+             </div>
+           </el-card>
+           <el-card>
+             <h4>成绩表</h4>
+             <el-table :data="tableData" border size="small" max-height="500">
+               <el-table-column prop="course.name" label="课程名"></el-table-column>
+               <el-table-column prop="grade" label="实际分数"></el-table-column>
+               <el-table-column prop="convertGrade" label="折算分数"></el-table-column>
+             </el-table>
+             <el-button style="margin:5px 5px" type='success' size="small">导出</el-button>
+     
+           </el-card>
+           
+        </el-card>
+        
+      </el-card>
+    </div>
 </template>
 
 <script>
@@ -77,13 +115,24 @@
     data() {
       return {
         data: [],
+        stuVal: '',
+        claVal: '',
         tempData: [],
         tableData: [],
         x_data: [],
         y_data: [],
         courseData: [],
         courseName: [],
-        // courseTime: [],
+        classOptions: {
+            value: '',
+            label: '',
+            disabled: false
+        },
+        stuOptions: {
+            value: '',
+            label: '',
+            disabled: false
+        },
         options: {
           value: '',
           label: '',
@@ -109,6 +158,12 @@
       Chart
     },
     watch: {
+      claVal(val) {
+          this.getStuList(val)
+      },
+    //   stuVal(val) {
+    //       this.loadData(val)
+    //   },
       courseName(val) {
         this.value = val[0]
         this.hadleOptions(val)
@@ -137,7 +192,8 @@
       }
     },
     created() {
-      this.loadData()
+    //   this.loadData()
+    this.getClass()
     },
     methods:{
       ...mapMutations([
@@ -148,11 +204,64 @@
         'setToken',
         // 'getUser',
         ]),
-        loadData(){
-          this.$ajax.post('grade/myGrade',{
+        //请求班级信息
+        getClass(){
+            this.$ajax.post('banji/list',{}).then(res=>{
+            var result=res.data;
+            console.log(result)
+            console.log("result111")
+            if(result.length>0){
+                let arr = []
+                result.forEach(item=>{
+                    arr.push({
+                        value: item.id,
+                        label: item.name,
+                        disabled: false
+                    })
+                })
+                this.classOptions = arr
+                this.claVal = arr[0].name
+            }
+         })
+        },
+        //请求学生信息
+        getStuList(val){
+            this.$ajax.post('student/page',{
+                limit: 10,
+                offset: 0,
+                order: "asc",
+                search: "",
+                sort: "id",
+                tbClassId: val,
+            }).then(res=>{
+                var result=res.data.data.rows;
+                console.log(result)
+                console.log("result111")
+                if(result.length>0){
+                    let arr = []
+                    result.forEach(item=>{
+                        arr.push({
+                            value: item.id,
+                            label: item.name,
+                            disabled: false
+                        })
+                    })
+                    this.stuOptions = arr
+                }
+            }) 
+        },
+        analysisStudent(){
+            console.log(11111)
+            console.log(this.stuVal)
+            this.loadData(this.stuVal)
+        },
+        loadData(val){
+          this.$ajax.post('grade/stuGrade',{
+              id:val
              }).then(res=>{
                 var result=res.data;
-                // console.log(result.data);
+                console.log(result);
+                console.log("result11122")
                 if(result.data.length>0){
                   this.tempData=result.data;
                   this.handleData(result.data);
@@ -344,8 +453,7 @@
          gradeAllData.sort((a,b)=>{
             return b.convertGrade-a.convertGrade
           })
-          console.log(gradeAllData)
-          console.log("sdfddsfsd")
+          // console.log(gradeAllData)
           //最高折算分数 
           let maxConvertGrade = Number(gradeAllData[0].convertGrade);
           //最低折算分数
@@ -365,7 +473,7 @@
           })
           let onlyTend = []
           let bigTend = []
-          gradeAllData.forEach((item,i)=>{
+          let tempGradeData = gradeAllData.forEach((item,i)=>{
             
             let tend = this.isTend(item.convertGrade-averageConvertGrade)
             item.tend = tend

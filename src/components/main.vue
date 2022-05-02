@@ -12,14 +12,26 @@
           active-text-color="#ffd04b">
           <el-submenu index="1">
             <template slot="title">
+              <i class="el-icon-key"></i>
+              <span>成绩分析</span>
+            </template>
+              <el-menu-item index="/analysis/studentAnalysis">个人成绩分析</el-menu-item>
+              <el-menu-item index="/analysis/classAnalysis">班级单科单次</el-menu-item>
+              <el-menu-item index="/analysis/classAnalysis">班级单科综合</el-menu-item>
+              <el-menu-item index="/analysis/classAllAnalysis">班级单次综合</el-menu-item>
+              <el-menu-item index="/analysis/classAllAnalysis">班级对比</el-menu-item>
+          </el-submenu>
+          <el-submenu index="2">
+            <template slot="title">
               <i class="el-icon-menu"></i>
               <span>成绩管理</span>
             </template>
               <el-menu-item index="/grade/classGradeManage">班级成绩管理</el-menu-item>
               <el-menu-item index="/grade/peasonGradeManage">个人成绩管理</el-menu-item>
               <el-menu-item index="/grade/classGradeList">班级成绩查询</el-menu-item>
+              <el-menu-item index="/grade/classGradeList">成绩快速导入</el-menu-item>
           </el-submenu>
-          <el-submenu index="2">
+          <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-setting"></i>
               <span>系统设置</span>
@@ -29,8 +41,9 @@
               <el-menu-item index="/student/manage">学生管理</el-menu-item>
               <el-menu-item index="/menu/manage">菜单管理</el-menu-item>
           </el-submenu>
-
+          
         </el-menu>
+        
       </div>
       <div class="rightDiv">
         <router-view></router-view>

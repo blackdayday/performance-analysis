@@ -27,7 +27,7 @@ export default new Router({
     },{
       path:'/',
       name: 'Login',
-      component: ()=>import ('../components/mainMsg.vue')
+      component: ()=>import ('../components/login.vue')
     },{
       path:'/main',
       name:'Main',
@@ -70,7 +70,20 @@ export default new Router({
         path:'/menu/manage',
         name:'menuManage',
         component:()=>import('../components/menu/manage.vue')
-      }
+      },{
+        path:'/analysis/studentAnalysis',
+        name:'studentAnalysis',
+        component:()=>import('../components/analysis/studentAnalysis.vue')
+      },{
+        path:'/analysis/classAnalysis',
+        name:'classAnalysis',
+        component:()=>import('../components/analysis/classAnalysis.vue')
+      },{
+        path:'/analysis/classAllAnalysis',
+        name:'classAllAnalysis',
+        component:()=>import('../components/analysis/classAllAnalysis.vue')
+      },
+
 
       ]
     }

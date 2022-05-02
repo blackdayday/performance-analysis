@@ -126,7 +126,7 @@
     /* background: url("~@/assets/bg.png"); */
     /* background-color: #E1F3D8; */
     /* height: calc(100vh - 60px); */
-    /* background: url("~@/assets/bg2.png");  */
+    background: url("~@/assets/bg2.png"); 
     /* width: 100%;
     height: 100%; */
     /* background-size: 1000px auto; */

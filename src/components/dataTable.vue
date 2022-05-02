@@ -193,6 +193,8 @@ export default {
     },
     refreshTable() {
       this.getTable().setCurrentRow();
+      // console.log(this.ajax.url);
+      // console.log(this.requestParam);
       this.$ajax.post(this.ajax.url, this.requestParam).then(res => {
         // console.log(res)
         // console.log("this.requestParam")

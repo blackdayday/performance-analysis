@@ -12,10 +12,10 @@
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-menu"></i>
-            <span>成绩管理</span>
+            <span>成绩分析</span>
           </template>
-          <el-menu-item index="/grade/peasonGradeList">个人成绩查询</el-menu-item>
-          <el-menu-item index="/grade/peasonClassGradeList">班级成绩查询</el-menu-item>
+          <el-menu-item index="/grade/peasonGradeList">个人成绩分析</el-menu-item>
+          <el-menu-item index="/grade/peasonClassGradeList">班级成绩分析</el-menu-item>
         </el-submenu>
         
       </el-menu>
