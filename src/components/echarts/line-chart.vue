@@ -1,9 +1,9 @@
 <template>
   <div ref='chart'>
-      <div id='mychart' v-if="1" :style="styleWidth" ref="mychart">
+      <div id='mychart' v-show="isShow" :style="styleWidth" ref="mychart">
 
       </div>
-    <div v-else>
+    <div v-if="!isShow">
       暂无数据
     </div>
   </div>
@@ -25,6 +25,10 @@ export default {
       type:Object,
       default:{}
     },
+    isShow:{
+      type:Boolean,
+      default:false
+    },
     // xData:{
     //   type:Array,
     //   default:[]
@@ -33,6 +37,9 @@ export default {
     //   type:Array,
     //   default:[]
     // },
+  },
+  computed:{
+    
   },
   watch:{
     chartOptions(val){
@@ -66,17 +73,17 @@ export default {
     watchChart(){
       let chart = this.$refs.chart
       if(!chart) return
-      console.log(chart);
+      // console.log(chart);
       this.chartWidth = chart.clientWidth
-      console.log(this.chartWidth);
+      // console.log(this.chartWidth);
       //监听窗体大小变化
       this.resize = debounce(() => {
         if(chart){
           this.chartWidth = chart.clientWidth
-          console.log(this.chartWidth);
+          // console.log(this.chartWidth);
           let width = this.chartWidth-30
           this.styleWidth = `width:${width}px`
-          console.log(this.styleWidth)
+          // console.log(this.styleWidth)
           this.$echarts.dispose(document.getElementById('mychart'))
           this.initCharts()
         }

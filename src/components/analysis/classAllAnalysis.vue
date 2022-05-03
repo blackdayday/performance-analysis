@@ -25,6 +25,7 @@
               </el-select>
               <el-button @click="loadData" type='primary' size="small" :disabled='isUsed'>分析</el-button>
           </el-card>
+         <div v-show="isShow">
           <el-card>
                 <div>
                     <div>成绩解读：</div>
@@ -53,6 +54,10 @@
                   <grade-table :tableData="rankData" :colDetail='rankCol' :ischange="false"></grade-table>
               </el-card>
           </el-card>
+          </div>
+          <el-card v-show="!isShow" style="height:600px">
+              请选择班级和考试时间，并点击分析
+          </el-card>
       </el-card>
   </div>
 </template>
@@ -66,6 +71,7 @@ export default {
   components: { pie , tendPie , tabTable , gradeTable},
     data(){
         return{
+            isShow: false,
             fst_data: [],
             classOptions:[],
             timeOptions:[],
@@ -118,6 +124,12 @@ export default {
             rankCol: [],
             // isUsed:false,
         }
+    },
+    watch:{
+        classV(val){
+            this.isShow = false
+        },
+        
     },
     computed:{
         isUsed(){
@@ -179,6 +191,7 @@ export default {
             })
         },
         getData(){
+            this.isShow = false;
             this.$ajax.post('grade/banjiGradeList',{
                 tbClassId:this.classV
                 }).then(res=>{
@@ -221,6 +234,7 @@ export default {
                        //成绩解读
                        this.analysisDataHtml()
                     console.log(this.fst_data)
+                    this.isShow = true;
                 }
             })
         },

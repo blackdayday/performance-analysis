@@ -19,7 +19,7 @@
     <el-card>
       <div>
         <h4>单科成绩趋势图</h4>
-        <Chart :chartOptions="chartOptions"></Chart>
+        <Chart :chartOptions="chartOptions" :isShow="isShow"></Chart>
      </div>
     </el-card>
     <el-card>
@@ -79,6 +79,7 @@
         data: [],
         tempData: [],
         tableData: [],
+        isShow: false,
         x_data: [],
         y_data: [],
         courseData: [],
@@ -236,7 +237,7 @@
               }
             ]
           }
-
+          this.isShow = true
           this.gradeAnalysis()
         },
         
@@ -279,6 +280,8 @@
         },
         //根据最后一次成绩分析学生成绩状况
         gradeAnalysis(){
+          console.log(this.y_data)
+          console.log("fdsakfhskejhfjkh")
           let first = ''
           let second = ''
           let third = ''

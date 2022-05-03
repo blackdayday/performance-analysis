@@ -82,6 +82,14 @@ export default new Router({
         path:'/analysis/classAllAnalysis',
         name:'classAllAnalysis',
         component:()=>import('../components/analysis/classAllAnalysis.vue')
+      },{
+        path:'/analysis/oneCoursesAn',
+        name:'oneCoursesAn',
+        component:()=>import('../components/analysis/oneCoursesAn.vue')
+      },{
+        path:'/analysis/cpClass',
+        name:'cpClass',
+        component:()=>import('../components/analysis/cpClass.vue')
       },
 
 

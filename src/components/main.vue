@@ -17,9 +17,9 @@
             </template>
               <el-menu-item index="/analysis/studentAnalysis">个人成绩分析</el-menu-item>
               <el-menu-item index="/analysis/classAnalysis">班级单科单次</el-menu-item>
-              <el-menu-item index="/analysis/classAnalysis">班级单科综合</el-menu-item>
+              <el-menu-item index="/analysis/oneCoursesAn">班级单科综合</el-menu-item>
               <el-menu-item index="/analysis/classAllAnalysis">班级单次综合</el-menu-item>
-              <el-menu-item index="/analysis/classAllAnalysis">班级对比</el-menu-item>
+              <el-menu-item index="/analysis/cpClass">班级对比</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">

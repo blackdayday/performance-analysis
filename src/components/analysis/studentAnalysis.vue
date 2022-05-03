@@ -31,9 +31,10 @@
                              :disabled="item.disabled">
                          </el-option>
                      </el-select>
-                     <el-button type="primary" @click="analysisStudent" size="small">分析</el-button>
+                     <!-- <el-button type="primary" :disabled='isUsed' @click="analysisStudent" size="small">分析</el-button> -->
                  </div>
-            </el-card>
+        </el-card>
+        <div v-show="init">
         <el-card>
             <div>单科成绩分析</div>
             
@@ -55,7 +56,7 @@
             <el-card>
               <div>
                 <h4>单科成绩趋势图</h4>
-                <Chart :chartOptions="chartOptions"></Chart>
+                <Chart :chartOptions="chartOptions" :isShow="isShow"></Chart>
              </div>
             </el-card>
             <el-card>
@@ -102,7 +103,10 @@
            </el-card>
            
         </el-card>
-        
+        </div>
+        <el-card v-show="!init" style="height:600px">
+          请选择学生，开始分析
+        </el-card>
       </el-card>
     </div>
 </template>
@@ -114,11 +118,14 @@
   export default {
     data() {
       return {
+        init: false,
+        isUsed: true,
         data: [],
         stuVal: '',
         claVal: '',
         tempData: [],
         tableData: [],
+        isShow: false,
         x_data: [],
         y_data: [],
         courseData: [],
@@ -159,11 +166,15 @@
     },
     watch: {
       claVal(val) {
-          this.getStuList(val)
+        this.init = false
+        this.getStuList(val)
       },
-    //   stuVal(val) {
-    //       this.loadData(val)
-    //   },
+      stuVal(val) {
+        if(val){
+          this.analysisStudent()
+        }
+          // this.loadData(val)
+      },
       courseName(val) {
         this.value = val[0]
         this.hadleOptions(val)
@@ -220,12 +231,15 @@
                     })
                 })
                 this.classOptions = arr
-                this.claVal = arr[0].name
+                this.claVal = arr[0].value
             }
          })
         },
         //请求学生信息
         getStuList(val){
+            this.stuOptions = []
+            this.stuVal = ''
+            this.isUsed = true
             this.$ajax.post('student/page',{
                 limit: 10,
                 offset: 0,
@@ -247,6 +261,8 @@
                         })
                     })
                     this.stuOptions = arr
+                    // this.stuVal = arr[0].value
+                    this.isUsed = false
                 }
             }) 
         },
@@ -256,6 +272,7 @@
             this.loadData(this.stuVal)
         },
         loadData(val){
+          this.init = false
           this.$ajax.post('grade/stuGrade',{
               id:val
              }).then(res=>{
@@ -265,6 +282,7 @@
                 if(result.data.length>0){
                   this.tempData=result.data;
                   this.handleData(result.data);
+                  this.init = true
                 }
               })
         },
@@ -345,7 +363,7 @@
               }
             ]
           }
-
+          this.isShow = true
           this.gradeAnalysis()
         },
         
@@ -379,6 +397,7 @@
             })
           }
           this.options=options;
+          this.value=options[0].value;
         },
         confirm(){
           //防抖动

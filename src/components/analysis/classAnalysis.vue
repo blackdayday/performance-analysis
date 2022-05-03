@@ -2,19 +2,19 @@
   <div class="main">
       <el-card>
           <div>班级成绩分析</div>
-          <el-card>
+          
               <el-card>
                   <span>班级</span>
                     <el-select v-model="bjId" placeholder="请选择班级">
                         <el-option v-for="item in bjs" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>
-              </el-card>
-              <el-card>
-                  <span>科目</span>
+                    <span>科目</span>
                     <el-select v-model="courseId" placeholder="请选择科目">
                         <el-option v-for="item in courses" :key="item.id" :label="item.key" :value="item.key"></el-option>
                     </el-select>
+                    <el-button @click="handlePie" :disabled='isUsed' type="primary" size="small">分析</el-button>
               </el-card>
+              <div v-show="isShow">
               <el-card>
                   <span >成绩解读：</span>
                   <div  v-html="analysisHtml">
@@ -67,7 +67,10 @@
                       
                   </el-table>
               </el-card>
-          </el-card>
+              </div>
+              <el-card v-show="!isShow" style="height:600px">
+                  请选择班级和单次科目，点击分析按钮
+              </el-card>
       </el-card>
   </div>
 </template>
@@ -79,6 +82,7 @@ export default {
   components: { pie },
     data() {
         return {
+            isShow: false,
             bjId: '',
             bjs: [],
             courses: [],
@@ -114,7 +118,7 @@ export default {
                     this.maxGrade = item.classHour;
                 }
             })
-            this.handlePie();
+            // this.handlePie();
         },
         tableData(newVal,oldVal){
             this.arrLevel(newVal);
@@ -141,6 +145,10 @@ export default {
         },
         getData(bjId){
             console.log(bjId);
+            this.isUsed = true; //命名反了，不想改
+            this.isShow = false;
+            this.courseId = '';
+            this.courses = [];
             this.$ajax.post('grade/banjiGradeList',{
                 tbClassId:bjId
             }).then(res=>{
@@ -173,7 +181,8 @@ export default {
                     this.courseId = this.courses[0].value;
                     console.log(this.courses);
                     console.log(this.courseId);
-                    this.handlePie()
+                    this.isUsed = false;
+                    // this.handlePie()
                 }
             })
         },
@@ -184,6 +193,7 @@ export default {
             })
         },
         handlePie(){
+            this.isShow = true;
             let data = []
             this.allData.forEach(item=>{
                 data.push({
