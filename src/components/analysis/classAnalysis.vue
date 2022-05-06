@@ -82,6 +82,7 @@ export default {
   components: { pie },
     data() {
         return {
+            exam_sort: [],
             isShow: false,
             bjId: '',
             bjs: [],
@@ -171,13 +172,22 @@ export default {
                         return item!='姓名'&&item!='学号'&&item!='总分'
                     })
                     // console.log(arr)
-                    this.courses = arr.map(item=>{
+                    let tem_arr = []
+                    tem_arr = arr.map(item=>{
                         return {
                             key:item,
                             value:item
                         }
                     })
-                    
+                    //课程排序
+                    this.coursesData.forEach(item=>{
+                        tem_arr.forEach(it=>{
+                            if(it.value === item.name){
+                                this.courses.push(it);
+                            }
+                        })
+                    })
+
                     this.courseId = this.courses[0].value;
                     console.log(this.courses);
                     console.log(this.courseId);
@@ -187,10 +197,62 @@ export default {
             })
         },
         handleHtml(){
+            console.log('开始解读');
             let html = '';  //解读
-            this.tableData.forEach(item=>{
-                arr.push(item.name);
+            let data = [...this.tableData]
+            let first = ''
+            let second = ''
+            let third = ''
+            let fourth = ''
+            //最高分
+            let max = 0;
+            let max_name = [];
+            //平均分
+            let avg_grade = 0;
+            let avg_conver = 0;
+            //及格率
+            let pre_qua = 0;
+            let num_qua = 0;
+            //优秀率
+            let pre_good = 0;
+            let num_good = 0;
+            max = data[0].grade;
+            data.forEach(item=>{
+                if(item.grade === max){
+                    let str = `${item.name}（${item.num}）`;
+                    max_name.push(str);
+                }
+                avg_grade += Number(item.grade);
+                avg_conver += Number(item.converGrade);
+                if(Number(item.converGrade)>=60){
+                    num_qua++;
+                }
+                if(Number(item.converGrade)>=90){
+                    num_good++;
+                }
             })
+            avg_grade = avg_grade/data.length;
+            avg_conver = avg_conver/data.length;
+            pre_qua = (num_qua/data.length*100).toFixed(2);
+            pre_good = (pre_good/data.length*100).toFixed(2);
+            max_name = max_name.join('、');
+            first = `<div class="analysis-title">（1）<a>${max_name}</a>同学获得本科最高分，分数为<a>${max}分;</div>`;
+            second = `<div class="analysis-title">（2）本科平均分为<a>${avg_grade}</a>分，<a>${this.reText(avg_conver)}</a>;</div>`;
+            third = `<div class="analysis-title">（3）及格率为<a>${pre_qua}</a>%，及格人数为<a>${num_qua}</a>人;</div>`;
+            fourth = `<div class="analysis-title">（4）优秀率为<a>${pre_good}</a>%,优秀人数为<a>${num_good}</a>人。</div>`;
+            this.analysisHtml = first+second+third+fourth;
+            //将<a>替换成<span style='color:red'>
+            this.analysisHtml = this.analysisHtml.replace(/<a/g,'<span style="color:red"');
+            //将</a>替换成</span>
+            this.analysisHtml = this.analysisHtml.replace(/<\/a>/g,'</span>');
+
+        },
+        reText(g){
+            if(Number(g)>=60){
+                return '及格';
+            }else{
+                return '不及格';
+            }
         },
         handlePie(){
             this.isShow = true;
@@ -211,15 +273,14 @@ export default {
                 item.rank = index+1;
             })
             this.tableData = []
-            data.forEach(item =>{
-                this.tableData.push(item);
-            })
+            this.tableData = [...data];
 
-            this.pieData = data
-            this.levelData = data
+            this.pieData = [...data];
+            this.levelData = [...data];
             this.tableData.forEach(item=>{
                 item.level = this.levelGrade(item.converGrade);
             })
+            this.handleHtml();
             console.log(data);
             console.log("pie")
 
@@ -262,16 +323,16 @@ export default {
                     this.fail.push(newVal[i]);
                 }
             }
-            console.log(this.excellent);
-            console.log('excellent');
-            console.log(this.good);
-            console.log('good');
-            console.log(this.medium);
-            console.log('medium');
-            console.log(this.pass);
-            console.log('pass');
-            console.log(this.fail);
-            console.log('fail');
+            // console.log(this.excellent);
+            // console.log('excellent');
+            // console.log(this.good);
+            // console.log('good');
+            // console.log(this.medium);
+            // console.log('medium');
+            // console.log(this.pass);
+            // console.log('pass');
+            // console.log(this.fail);
+            // console.log('fail');
         },
         getGradeSort(){
             this.$ajax.post('exam/list',{
@@ -281,7 +342,7 @@ export default {
                 console.log("213");
                 if(result.length>0){
                     let arr = [];
-                    
+                    this.exam_sort = result
                 }
             })
         },
@@ -292,16 +353,27 @@ export default {
                 console.log(result);
                 console.log("123");
                 if(result.length>0){
-                    let arr = [];
-                    this.coursesData = result;
+                    let arr = [...result]
+                    let temp = [];
+                    this.exam_sort.forEach(item=>{
+                        arr.forEach(it=>{
+                            if(it.name.indexOf(item.exam_name)>-1){
+                                temp.push(it);
+                            }
+                        })
+                    })
+                    console.log(temp);
+                    console.log("456789");
+                    this.coursesData = temp;
                 }
             })
         }
         
     },
     created(){
-        // this.getClassList();
-        // this.getGradeSort()
+        this.getGradeSort()
+        this.getAllCourses()
+        this.getClassList();
     },
     mounted(){
         this.getGradeSort()
@@ -319,5 +391,10 @@ export default {
     width: 100%;
     height: 100%;
     background-color: aliceblue;
+}
+.analysis-title{
+    font-size:20px;
+    margin-bottom:10px;
+    margin-top: 10px;
 }
 </style>

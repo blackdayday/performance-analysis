@@ -39,7 +39,7 @@
         <span v-html="gradeAnalysisHtml"></span>
      </div>
     </el-card>
-    <el-card>
+    <el-card v-if="0">
         <h4>综合分析表格</h4>
         <grade-table :tableData="tableData" :colDetail="colDetail"></grade-table>
     </el-card>
