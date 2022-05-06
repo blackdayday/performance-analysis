@@ -34,7 +34,7 @@
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-setting"></i>
-              <span>系统设置</span>
+              <span>信息管理</span>
             </template>
               <el-menu-item index="/banji/manage">班级管理</el-menu-item>
               <el-menu-item index="/course/manage">课程管理</el-menu-item>

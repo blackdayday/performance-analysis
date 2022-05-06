@@ -38,8 +38,23 @@
                   <tend-pie :data="pieData"></tend-pie>
               </el-card>
               <el-card>
-                  <div>详情</div>
                     <!-- <tab-table></tab-table> -->
+                    <!-- <div v-html="dtaHtml"></div> -->
+                    <div class="analysis-title">
+                    <span>偏科情况：</span>
+                    <span v-for="(item,index) in stu_data" :key="index" @click="showTendStu(item)" style="color:red">{{item[0]}}({{item[1]}}){{end(stu_data.length,index)}}</span>
+                    <el-tooltip placement="top">
+                      <div slot="content">可点击学生名字，查看学生成绩</div>
+                      <i class="el-icon-warning"></i>
+                    </el-tooltip>
+                    </div>
+                    <div v-show="showTable">
+                        <div>{{stu}}的成绩：</div>
+                        <el-table   :data="stu_table" border height="150">
+                            <el-table-column v-for="(item,index) in col_stu" :key='index' :prop="item.prop" :label="item.label" :align="item.align" :width="item.width">
+                            </el-table-column>
+                         </el-table>
+                    </div>
               </el-card>
           </el-card>
           <el-card>
@@ -51,7 +66,7 @@
           <el-card>
               <div>班级排名表</div>
               <el-card>
-                  <grade-table :tableData="rankData" :colDetail='rankCol' :ischange="false"></grade-table>
+                  <grade-table :tableData="rankData"  :colDetail='rankCol' :ischange="false"></grade-table>
               </el-card>
           </el-card>
           </div>
@@ -78,7 +93,7 @@ export default {
             classV: '',
             timeV: '',
             gradeAnalysisHtml:'',
-            pieData:[],
+            dtaHtml: '',
             coursesData:[],
             detailData:[],
             courses:[],
@@ -119,9 +134,21 @@ export default {
                     align: 'center',
                     width: '180',
                 },
+                {
+                    prop: 'good',
+                    label: '优秀率',
+                    align: 'center',
+                    width: '180',
+                },
             ],
             rankData:[],
             rankCol: [],
+            stu_data: [],
+            stu_table: [],
+            col_stu: [],
+            showTable: false,
+            stu: '',
+            // height: '50px',
             // isUsed:false,
         }
     },
@@ -135,10 +162,18 @@ export default {
         isUsed(){
             return !this.classV || !this.timeV
         },
+        
     },
     methods:{
+        end(a,b){
+            if(a === b+1){
+                return ''
+            }
+            return '、'
+        },
         loadData(){
             //等待getData完成
+            this.showTable = false
             this.getData()
             // this.getData()
             console.log('开始')
@@ -228,6 +263,7 @@ export default {
                        this.pieData = []
                        this.pieData = [...this.fst_data]
                        //详情
+                       this.pieTend()
                        this.detail()
                         //排名
                         this.totalData()
@@ -292,10 +328,67 @@ export default {
                     this.bigTend++
                 }
             })
+            let data_t = [...this.detailData]
+            
+            
+            data_t.forEach((item,i)=>{
+                item.goodnum = Number(item.good.split('%')[0])
+                item.prenum = Number(item.pre.split('%')[0])
+            })
+            data_t.sort((a,b)=>{return b.goodnum-a.goodnum})
+            //数组排序
+            let maxgood = data_t[0].goodnum
+            // console.log(maxgood)
+            // console.log(data_t)
+            data_t.sort((a,b)=>{return b.prenum-a.prenum})
+            let maxpre = data_t[0].prenum
+            // console.log(maxpre)
+            // console.log(data_t)
+            // console.log(111)
+            let arr_good = []
+            let arr_pre = []
+            data_t.forEach((item,i)=>{
+                if(item.goodnum === maxgood){
+                    arr_good.push(item.name)
+                }
+                if(item.prenum === maxpre){
+                    arr_pre.push(item.name)
+                }
+            })
+            //数组转字符串
+            arr_good = arr_good.join('、')
+            arr_pre = arr_pre.join('、')
+            let sec = ''
+            let trd = ''
+            
+            sec = `<div class="analysis-title">（2）<span style='color:red'>${arr_pre}</span>及格率最高，为<span style='color:red'>${maxpre}%</span></div>`
+            if(maxpre === 0){
+                sec = `<div class="analysis-title">（2）所有科目及格率都为0%</div>`
+            }
+            trd = `<div class="analysis-title">（3）<span style='color:red'>${arr_good}</span>科优秀率最高，为<span style='color:red'>${maxgood}%</span></div>`
+            if(maxgood === 0){
+                trd = '<div class="analysis-title">（3）所有科目优秀率都为0%</div>'
+            }
             let str = ''
             let first = ''
-            first = `<div class="analysis-first">（1）班上有<span style='color:red'>${this.bigTend}</span>人，出现偏科情况</div>`
-            this.gradeAnalysisHtml = first
+            first = `<div class="analysis-title">（1）班上有<span style='color:red'>${this.bigTend}</span>人，出现偏科情况</div>`
+            let four = ``
+            let five = ``
+            let temp_arr = []
+            console.log(this.rankData)
+            let totaL_max = this.rankData[0].total
+            let total_avg = 0
+            this.rankData.forEach((item,i)=>{
+                total_avg += item.total
+                if(item.total === totaL_max){
+                    temp_arr.push(`${item.name}（${item.num}）`)
+                }
+            })
+            total_avg = (total_avg/this.rankData.length).toFixed(2)
+            temp_arr = temp_arr.join('、')
+            four = `<div class="analysis-title">（4）<span style='color:red'>${temp_arr}</span>同学获得班级总分最高分，分数为<span style='color:red'>${totaL_max}</span>分</div>`
+            five = `<div class="analysis-title">（5）班级总分平均分为<span style='color:red'>${total_avg}</span>分</div>`
+            this.gradeAnalysisHtml = first+sec+trd+four+five
         },
         //科目数据
         detail(){
@@ -338,11 +431,15 @@ export default {
                 let max = 0
                 let min = 0
                 let pre = 0
+                let good = 0
                 item.forEach((it,i)=>{
                     avg += Number(it.grade)
                     avgCon += Number(it.convertGrade)
                     if(this.isQualified(it.convertGrade)){
                         pre++
+                    }
+                    if(Number(it.convertGrade)>=90){
+                        good++
                     }
                     if(i===0){
                         max = it.grade
@@ -359,13 +456,15 @@ export default {
                 avg = (avg/item.length).toFixed(2)
                 avgCon = (avgCon/item.length).toFixed(2)
                 pre = (pre/item.length*100).toFixed(2)
+                good = (good/item.length*100).toFixed(2)
                 obj = {
                     name:item[0].name.split('-')[0],
                     avgGrade:avg,
                     avgConGrade:avgCon,
                     maxGrade:max,
                     minGrade:min,
-                    pre:`${pre}%`
+                    pre:`${pre}%`,
+                    good:`${good}%`
                 }
                 detailData.push(obj)
             })
@@ -443,6 +542,76 @@ export default {
             console.log("temp_data")
             
         },
+        pieTend(){
+            let data = [...this.pieData]
+            let showTend = false
+            let names = []
+            let nums = []
+            let stu_data = []
+            data.forEach(item =>{
+                if(item.isTend){
+                    showTend = true
+                    names.push(item[0])
+                    nums.push(item[1])
+                    stu_data.push(item)
+                }
+            })
+            this.stu_data = [...stu_data]
+            console.log(names)
+            console.log("names")
+            let inithtml = `<span>偏科情况：</span>`
+            if(showTend){
+                // this.pieTendHtml = inithtml
+                let str = ''
+                names.forEach((item,i)=>{
+                    str += `<button style='color:red' @click='showTendStu(${i})'>${item}(${nums[i]})</button>`
+                })
+                this.dtaHtml = inithtml+str
+            }else{
+                inithtml += '没有同学偏科'
+                this.dtaHtml = inithtml
+            }
+        },
+        showTendStu(item){
+            console.log(item)
+            let data = [...item]
+            let obj = {}
+            let obj_temp = {}
+            this.stu = data[0]+'('+data[1]+')'
+            data.forEach((it,i)=>{
+                if(typeof it === 'object'){
+                    let sub = it.name.split('-')[0]
+                    obj[`${sub}`] = it.grade
+                    obj_temp[`${sub}`] = this.tendStr(it.tend)
+                }
+            })
+            this.stu_table = [obj,obj_temp]
+            let keys = Object.keys(obj)
+            let arr =[]
+            keys.forEach(item=>{
+                arr.push({
+                    label:item,
+                    prop:item,
+                    align: 'center',
+                    width: '100',
+                })
+            })
+            this.col_stu = [...arr]
+            this.showTable = true
+            console.log(this.col_stu)
+            console.log(this.stu_table)
+            console.log("stu_table")
+        },
+        tendStr(tend){
+            tend = Number(tend)
+            if(tend === 0){
+                return '正常'
+            }else if(tend === 1){
+                return '稍偏科'
+            }else if(tend === 2){
+                return '偏科'
+            }
+        },
         //根据判断是否偏科（文字）
         isTend(difScore){
           difScore = Math.abs(difScore)
@@ -481,5 +650,9 @@ export default {
 </script>
 
 <style>
-
+.analysis-title{
+    font-size:20px;
+    margin-bottom:10px;
+    margin-top: 10px;
+}
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div>
-      <el-table v-if="isShow" :data="tableData" border height="400">
+      <el-table v-show="isShow" :data="tableData" border height="400">
           <el-table-column v-for="(item,index) in colDetail" :key='index' :prop="item.prop" :label="item.label" :align="item.align" :width="item.width">
-              <slot name="handleClick" :index="index" :row="row"></slot>
+              <!-- <slot name="handleClick" :index="index" :row="row"></slot> -->
           </el-table-column>
           
           <!-- <el-table-column  label="跳转" align="center" width="250">
@@ -12,7 +12,7 @@
          </el-table-column> -->
 
       </el-table>
-      <div v-else>暂无数据</div>
+      <div v-show="!isShow">暂无数据</div>
   </div>
 </template>
 
@@ -28,6 +28,12 @@ export default {
             return this.tableData.length>0;
         },
     },
+    // watch:{
+    //     tableData(val){
+    //         console.log(val) 
+    //         console   
+    //     },
+    // },
     props:{
         tableData:{
             type:Array,
