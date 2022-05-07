@@ -28,8 +28,8 @@
             </template>
               <el-menu-item index="/grade/classGradeManage">班级成绩管理</el-menu-item>
               <el-menu-item index="/grade/peasonGradeManage">个人成绩管理</el-menu-item>
-              <el-menu-item index="/grade/classGradeList">班级成绩查询</el-menu-item>
-              <el-menu-item index="/grade/classGradeList">成绩快速导入</el-menu-item>
+              <!-- <el-menu-item index="/grade/classGradeList">班级成绩查询</el-menu-item> -->
+              <el-menu-item index="/grade/addGradeExcel">成绩快速导入</el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">

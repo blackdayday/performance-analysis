@@ -23,7 +23,7 @@ export default {
   props:{
     chartOptions:{
       type:Object,
-      default:{}
+      default:()=>{}
     },
     isShow:{
       type:Boolean,

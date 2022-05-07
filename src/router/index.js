@@ -90,6 +90,10 @@ export default new Router({
         path:'/analysis/cpClass',
         name:'cpClass',
         component:()=>import('../components/analysis/cpClass.vue')
+      },{
+        path:'/grade/addGradeExcel',
+        name:'addGradeExcel',
+        component:()=>import('../components/grade/addGradeExcel.vue')
       },
 
 

@@ -157,9 +157,7 @@ export default {
                 console.log(result);
                 console.log("allgrade")
                 if(result.length>0){
-                    result.forEach(item =>{
-                        this.allData.push(item);
-                    })
+                    this.allData = [...result];
                     let arr = [];
                     arr = Object.keys(result[0])
                     // arr = arr.map(item=>{
