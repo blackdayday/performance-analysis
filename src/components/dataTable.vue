@@ -12,7 +12,7 @@
     <el-row style="margin-bottom: 5px;">
       <el-col :span="20">
         <el-button :size="size" type="info" icon="el-icon-plus" @click="onAddClick">新增</el-button>
-        <el-button :size="size" type="info" icon="el-icon-edit" :disabled="modifyDisabled" @click="onEditClick">修改</el-button>
+        <el-button :size="size" type="info" icon="el-icon-edit" :disabled="modifyDisabled" @click="onEditClick" v-if='showEdit'>修改</el-button>
         <el-button :size="size" type="info" icon="el-icon-delete" :disabled="modifyDisabled" @click="onDeleteClick">删除</el-button>
         <slot name="buttons"></slot>
         <el-button :size="size" type="success" icon="el-icon-refresh" @click="onRefreshClick">刷新</el-button>
@@ -97,6 +97,17 @@ export default {
       type: Object,
       required : true
     }
+    ,
+    sortTime:{
+      type: Array,
+      default: () => []
+    }
+  },
+  watch:{
+    sortTime(val){
+      console.log(val)
+      console.log("1213")
+    }
   },
   computed: {
     requestParam() {
@@ -126,14 +137,16 @@ export default {
         deleteUrl: ''
       },
       pageParam: {
-        size: 10,
+        size: 200,
         page: 1,
         sort: 'id',
         order: 'asc',
         pageSizes: [2, 10, 20, 50, 100, 200]
       },
       search: '',
-      total: 0
+      total: 0,
+      showEdit: true,
+      coursesName: [],
     };
   },
   methods: {
@@ -198,11 +211,41 @@ export default {
       this.$ajax.post(this.ajax.url, this.requestParam).then(res => {
         // console.log(res)
         // console.log("this.requestParam")
-        // console.log(this.ajax.url)
+        console.log(this.ajax.url)
+        
         var result = res.data;
         if (result.data.rows) {
-          this.data = result.data.rows;
-          this.total = result.data.total;
+          if(this.ajax.url === 'course/page'){
+            this.showEdit = false; 
+            let arr = result.data.rows
+            let name = []
+            let nameOp = []
+            arr.forEach(item => {
+              name.push(item.name)
+            })
+            this.coursesName = [...name]
+            name = name.map(item => {return item.split('-')[0]})
+            name = [...new Set(name)]
+            name.forEach((it,i) => {
+              let max_grade = 100
+              arr.forEach(item => {
+                if(item.name.split('-')[0] === it){
+                  max_grade = item.classHour
+                }
+              })
+              nameOp.push({
+                id: i+1,
+                name: it,
+                classHour: max_grade
+              })
+            })
+            this.data = nameOp;
+            this.total = nameOp.length;
+          }else{
+            this.data = result.data.rows;
+            this.total = result.data.total;
+          }
+          
         } else {
           this.data = result;
         }
@@ -213,6 +256,27 @@ export default {
     },
     onSaveBtnClick() {
       //console.log(1);
+      console.log(Object.assign(this.form,this.tableAttribute.urlParam))
+      console.log(4564654658)
+      
+      if(this.ajax.url === 'course/page'){
+        let time = Object.assign(this.form,this.tableAttribute.urlParam).name
+        this.sortTime.forEach(item => {
+          let name = time+'-'+item.exam_name
+          if(this.coursesName.includes(name)){
+            return
+          }
+          let obj = {
+            id: '',
+            name: name,
+            classHour: this.form.classHour
+          }
+          this.bigAdd(obj)
+          console.log(obj)
+          console.log(name)
+        })
+        return
+      }
       this.$refs.form.validate(valid=>{
         if(valid){
           this.$ajax.post(this.ajax.saveUrl,Object.assign(this.form,this.tableAttribute.urlParam)).then(res=>{
@@ -232,6 +296,24 @@ export default {
             }
           })
         }
+      })
+    },
+    bigAdd(form){
+      this.$ajax.post(this.ajax.saveUrl,form).then(res=>{
+        var result=res.data;
+            if(result.success){
+              this.$notify.success({
+                message:result.msg,
+                duration:2000
+              });
+              this.dialogVisible=false;
+              this.refreshTable();
+            }else{
+              this.$notify.error({
+                message:result.msg,
+                duration:2000
+              })
+            }
       })
     },
     onRefreshClick() {

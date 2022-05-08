@@ -4,7 +4,7 @@
           <div>班级成绩分析</div>
           
               <el-card>
-                  <span>班级</span>
+                    <span>班级</span>
                     <el-select v-model="bjId" placeholder="请选择班级">
                         <el-option v-for="item in bjs" :key="item.id" :label="item.name" :value="item.id"></el-option>
                     </el-select>

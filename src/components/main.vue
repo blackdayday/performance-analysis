@@ -39,7 +39,7 @@
               <el-menu-item index="/banji/manage">班级管理</el-menu-item>
               <el-menu-item index="/course/manage">课程管理</el-menu-item>
               <el-menu-item index="/student/manage">学生管理</el-menu-item>
-              <el-menu-item index="/menu/manage">菜单管理</el-menu-item>
+              <!-- <el-menu-item index="/menu/manage">菜单管理</el-menu-item> -->
           </el-submenu>
           
         </el-menu>
