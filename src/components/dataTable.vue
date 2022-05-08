@@ -147,6 +147,7 @@ export default {
       total: 0,
       showEdit: true,
       coursesName: [],
+      coursesData: [],
     };
   },
   methods: {
@@ -164,6 +165,14 @@ export default {
       return this.data;
     },
     onDeleteClick() {
+      if(this.ajax.url === 'course/page'){
+        this.delMany()
+      }else{
+        this.delOne();
+      }
+      
+    },
+    delOne(){
       this.$confirm('是否要删除这条数据？','提示',{
         confirmButtonText:'确定',
         cancelButtonText:'取消',
@@ -187,7 +196,51 @@ export default {
       }).catch(e=>{
 
       })
+    },
+    delMany(){
+      this.$confirm('是否要删除这个课程吗？（如果有该科已有部分录入成绩，无法全部删除）','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      }).then(()=>{
+        console.log(this.current)
+        let name = this.current.name;
+        let arr = []
+        this.coursesName.forEach((item,i)=>{
+          if(item.indexOf(name)>-1){
+            arr.push(i)
+          }
+        })
+        arr.forEach(item=>{
+          let obj = {
+            id:this.coursesData[item].id,
+            name:this.coursesData[item].name,
+            classHour:this.coursesData[item].classHour,
+          }
+          console.log(obj)
+          this.delSub(obj)
+        })
+        
+      }).catch(e=>{
 
+      })
+    },
+    delSub(obj){
+      this.$ajax.post(this.ajax.deleteUrl,obj).then(res=>{
+          var result=res.data;
+          if(result.success){
+            this.$notify.success({
+              message:result.msg,
+              duration:2000
+            });
+            this.refreshTable();
+          }else{
+            this.$notify.error({
+              message:result.msg,
+              duration:2000
+            })
+          }
+        })
     },
     onEditClick() {
       Object.assign(this.form, this.current);
@@ -218,6 +271,7 @@ export default {
           if(this.ajax.url === 'course/page'){
             this.showEdit = false; 
             let arr = result.data.rows
+            this.coursesData = [...arr]
             let name = []
             let nameOp = []
             arr.forEach(item => {

@@ -44,13 +44,13 @@
         courseId: '',
         bjs:[{
           id:1,
-          name:'17级软件1班'
+          name:'180001班'
         },{
           id:2,
-          name:'17级软件2班'
+          name:'180002班'
         },{
           id:3,
-          name:'17级软件3班'
+          name:'180003班'
         }],
         courses:[{
           id:1,
@@ -125,6 +125,8 @@
             grade:row.grade,
             isUsed:true
             };
+            console.log(param)
+            console.log("param")
           this.$ajax.post('grade/save',param)
           .then(res=>{
             var result=res.data;
