@@ -2,12 +2,12 @@
   
   <div class="logindemo" style="height:500px;width:1000px;margin: 0 auto;border:10px solid #FF7F50;background-color: beige;">
     <!-- <img :src="imglocation"  width="100%" height="100%" style="z-index:-1;position: absolute;"> -->
-    <el-form ref="form" :model="user" :rules="rules" status-icon label-width="100px">
-      <el-row type="flex" justify="center">
+    <el-form ref="form" class="formone" :model="user" :rules="rules" status-icon label-width="100px">
+      <el-row type="flex"  justify="center">
         <el-col :span="5">
-          <el-form-item label-width="70px" style="width: 100%;">
+          <el-form-item label-width="70px" class="aaa" style="width: 100%;">
             <span>
-              <font style="width: 100%; text-align: center;" color="#606266" size="5">登 录</font>
+              <font style="width: 100%; text-align: center;" color="black" size="5">登 录</font>
             </span>
           </el-form-item>
         </el-col>
@@ -146,10 +146,20 @@
 
 <style>
 .logindemo{
-  background-color: beige;
-  /* background: url("~@/assets/bg2.png");
+  background-color: red;
+  background: url("~@/assets/1.png");
   width: 100%;
   height: 100%;
-  background-size: 1000px auto; */
+  background-size: 1000px auto;
+}
+.formone{
+  /* background-color:aquamarine; */
+  /* margin-top:100px; */
+  width: 100%;
+  height: 100%;
+}
+.aaa{
+  margin-top:100px;
+  /* color: black; */
 }
 </style>

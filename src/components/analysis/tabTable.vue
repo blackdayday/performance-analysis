@@ -1,6 +1,6 @@
 <template>
   <div>
-      <el-table v-if="isShow" :data="tableData" border height="400">
+      <el-table v-if="isShow" :data="tableData" border height="200">
           <el-table-column prop="num" label="学号" align="center" width="250"></el-table-column>
           <el-table-column prop="name" label="姓名" align="center" width="250"></el-table-column>
           <el-table-column prop="grade" label="成绩" align="center" width="250"></el-table-column>

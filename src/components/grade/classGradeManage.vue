@@ -127,7 +127,7 @@
             };
             console.log(param)
             console.log("param")
-          this.$ajax.post('grade/save',param)
+          this.$ajax.post('grade/addGradeList',param)
           .then(res=>{
             var result=res.data;
             if(result.success){

@@ -1,7 +1,6 @@
 <template>
   <div>
       <el-card>
-          hello world!
           <el-card>
               <span>班级</span>
               <el-select v-model="bjId" placeholder="请选择班级">
@@ -23,8 +22,10 @@
                	multiple                
                	:show-file-list="false"                
                >              
-               <el-button type="primary" :disabled='isChoosed'>导入数据</el-button>                         
+               <el-button type="primary" :disabled='isChoosed'>导入数据</el-button>   
+                                   
                </el-upload>
+               <el-button type="primary"  @click="test">测试</el-button>   
           </el-card>
           <el-card style="height:600px">
               <el-table border :data="tableData" v-show="isShow">
@@ -148,21 +149,45 @@ export default {
         },
         saveExcel(){
             let data = [...this.exportData]
+            let willSaveData = []
             data.forEach((it,i) => {
-                let id = 0
+                let id = -1
                 this.stuData.forEach((item,index) => {
                     if(Number(it['学号']) === Number(item.stuNo)&&it['姓名'] === item.name){
                         id = item.id
                     }
                 })
-                let param = {
-                       id:row.id,
-                       studentId:id,
-                       courseId:cId,
-                       grade:grade,
-                       isUsed:true
-                    };
+                if(id === -1){
+                    this.$message({
+                        message: `${it['姓名']}学号为${it['学号']}的学生不存在`,
+                        type: 'error',
+                        duration: 5000
+                    })
+                    return
+                }
+                let courseKeyNames = []
+                let timeCourse = {}
+                this.coursesData.forEach((item,index) => {
+                    timeCourse[item.name] = item.id
+                })
+                courseKeyNames = Object.keys(it)
+                courseKeyNames.forEach((item,index) => {
+                    if(item !== '学号'&&item !== '姓名'){
+                        let obj  = {}
+                        let c_name = `${item}-${this.timeId}`
+                        obj = {
+                            courseId: timeCourse[c_name],
+                            isUsed: true,
+                            stuId: id,
+                            score: it[item]
+                        }
+                        willSaveData.push(obj)
+                    }
+                })
+                
             })
+            console.log(willSaveData)
+            console.log("willSaveData")
         },
         checkGrade(){
             console.log(this.timeId)
@@ -194,6 +219,13 @@ export default {
             .then(res=>{
                 console.log(res)
                 console.log("创建科目")
+            })
+        },
+        test(){
+            this.$ajax.post('grade/addGradeList',{courseId:1,banjiId:1})
+            .then(res=>{
+                console.log(res)
+                console.log("创建科目111")
             })
         },
         getClassList(){
